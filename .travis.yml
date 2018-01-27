@@ -9,13 +9,16 @@ before_install:
 script:
   - npm run build
 before_deploy:
+  - PACKAGE_VERSION=$(node -p -e "require('./package.json').version")
   - git add -A || true
   - git commit -m "build" || true
+  - git tag -a "v$PACKAGE_VERSION" -m "Version $PACKAGE_VERSION"
 deploy:
   - provider: npm
     email: emilenijssen@gmail.com
     skip_cleanup: true
     on:
+      tags: true
       branch: production
       repo: WeeJeWel/node-luxio
     api_key:
@@ -26,6 +29,7 @@ deploy:
       - dist/luxio.js
       - dist/luxio.min.js
     on:
+      tags: true
       branch: production
       repo: WeeJeWel/node-luxio
     api_key:
